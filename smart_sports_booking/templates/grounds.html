@@ -2,22 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sports Grounds Availability</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfZone | Sports Booking</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .btn { display: inline-block; background: #2563eb; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: bold; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; --muted: #94a3b8; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+        nav { display: flex; justify-space-between; align-items: center; padding: 20px 40px; background: #162032; border-bottom: 1px solid #334155; }
+        nav a { color: var(--text); text-decoration: none; margin-left: 20px; font-weight: 500; }
+        nav a.btn-nav { background: var(--accent); color: #0f172a; padding: 8px 16px; border-radius: 6px; font-weight: 600; }
+        .hero { text-align: center; padding: 40px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .card { background: var(--card); border: 1px solid #334155; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
+        .badge { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; width: fit-content; }
+        .price { font-size: 1.2rem; font-weight: 700; color: #4ade80; margin: 10px 0; }
+        .btn { display: block; text-align: center; background: var(--accent); color: #0f172a; padding: 12px; border-radius: 8px; font-weight: 700; text-decoration: none; }
+        .btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
-    <h2>Available Sports Grounds</h2>
+    <nav>
+        <div style="font-size: 1.4rem; font-weight: 700;">⚽ TurfZone</div>
+        <div>
+            {% if current_user.is_authenticated %}
+                <span>Welcome, <strong>{{ current_user.username }}</strong></span>
+                <a href="{{ url_for('my_bookings') }}">My Bookings</a>
+                <a href="{{ url_for('logout') }}" style="color: #fca5a5;">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}" class="btn-nav">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Book Premium Sports Turf Near You</h1>
+        <p style="color: var(--muted);">Real-time slot availability for Football, Cricket, Badminton & more</p>
+    </div>
+
     <div class="grid">
         {% for ground in grounds %}
             <div class="card">
-                <h3>{{ ground.name }}</h3>
-                <p>Sport: <strong>{{ ground.sport_type }}</strong></p>
-                <p>Location: {{ ground.location }}</p>
+                <div>
+                    <span class="badge">{{ ground.sport_type }}</span>
+                    <h3 style="margin: 12px 0 6px 0;">{{ ground.name }}</h3>
+                    <p style="color: var(--muted); margin: 0;">📍 {{ ground.location }}</p>
+                    <div class="price">₹{{ ground.price_per_hour or 500 }} / hour</div>
+                </div>
                 <a href="{{ url_for('create_booking', ground_id=ground.id) }}" class="btn">Book Now</a>
             </div>
         {% endfor %}

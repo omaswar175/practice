@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Bookings | TurfZone</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .item { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-cancel { background: #7f1d1d; color: #fca5a5; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>My Turf Bookings</h2>
+        <a href="{{ url_for('ground_list') }}" style="color: #38bdf8; text-decoration: none;">← Back to Grounds</a>
+        <br><br>
+
+        {% if not bookings %}
+            <p style="color: #94a3b8;">You don't have any bookings yet.</p>
+        {% endif %}
+
+        {% for b in bookings %}
+            <div class="item">
+                <div>
+                    <h3 style="margin: 0 0 6px 0;">{{ b.ground.name }}</h3>
+                    <p style="margin: 0; color: #94a3b8;">📅 {{ b.booking_date }} &nbsp;|&nbsp; ⏰ {{ b.time_slot }}</p>
+                </div>
+                <form method="POST" action="{{ url_for('cancel_booking', booking_id=b.id) }}">
+                    <button type="submit" class="btn-cancel">Cancel</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

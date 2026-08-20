@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | TurfZone</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 32px; border-radius: 16px; border: 1px solid #334155; width: 360px; }
+        input, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; box-sizing: border-box; }
+        button { background: #38bdf8; color: #0f172a; font-weight: 700; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Create an Account</h2>
+        <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" required placeholder="johndoe">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="john@example.com">
+            <label>Password</label>
+            <input type="password" name="password" required placeholder="••••••••">
+            <button type="submit">Register Account</button>
+        </form>
+        <p style="font-size: 0.9rem; color: #94a3b8; text-align: center;">Already registered? <a href="{{ url_for('login') }}" style="color: #38bdf8;">Login</a></p>
+    </div>
+</body>
+</html>
