@@ -38,6 +38,33 @@
             flex-direction: column;
         }
 
+        @keyframes rotateFootball {
+            0% {
+                transform: rotateX(0deg);
+            }
+            100% {
+                transform: rotateX(360deg);
+            }
+        }
+
+        @keyframes navbarColorShift {
+            0% {
+                background: linear-gradient(135deg, #162032 0%, #1e293b 100%);
+            }
+            25% {
+                background: linear-gradient(135deg, #0f172a 0%, #162032 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 100%);
+            }
+            75% {
+                background: linear-gradient(135deg, #0f172a 0%, #162032 100%);
+            }
+            100% {
+                background: linear-gradient(135deg, #162032 0%, #1e293b 100%);
+            }
+        }
+
         /* ================ HEADER ================ */
         header {
             background: linear-gradient(135deg, #162032 0%, #1e293b 100%);
@@ -46,6 +73,7 @@
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: navbarColorShift 4s ease-in-out infinite;
         }
 
         .header-container {
@@ -75,6 +103,8 @@
 
         .logo-icon {
             font-size: 2rem;
+            animation: rotateFootball 3s linear infinite;
+            display: inline-block;
         }
 
         nav {

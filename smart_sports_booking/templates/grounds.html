@@ -4,104 +4,577 @@
 
 {% block extra_css %}
 <style>
+    /* ================ KICK ANIMATION OVERLAY ================ */
+    #kick-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0d1117;
+        z-index: 99999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.8s ease, visibility 0.8s;
+    }
+
+    #kick-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    #kick-overlay.fade-out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    /* Page Content Initially Hidden */
+    .page-wrapper {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+        padding: 20px 0;
+    }
+
+    .page-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ================ HERO SECTION ================ */
     .hero {
         text-align: center;
-        padding: 30px 0 40px 0;
-        background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
-        border-radius: 12px;
+        padding: 60px 20px;
+        background: linear-gradient(-45deg, rgba(56, 189, 248, 0.2) 0%, rgba(96, 165, 250, 0.1) 25%, rgba(59, 130, 246, 0.15) 50%, rgba(56, 189, 248, 0.1) 75%, rgba(96, 165, 250, 0.2) 100%);
+        border-radius: 20px;
         margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(ellipse at top, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
     }
 
     .hero h1 {
-        font-size: 2.5rem;
-        margin: 0 0 12px 0;
-        background: linear-gradient(135deg, var(--accent) 0%, #60a5fa 100%);
+        font-size: 3.5rem;
+        margin: 0 0 20px 0;
+        background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 50%, #818cf8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
+        font-weight: 800;
+        letter-spacing: -1px;
     }
 
-    .hero p {
-        font-size: 1.1rem;
-        color: var(--text-muted);
-        margin: 0;
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: #94a3b8;
+        margin: 0 0 30px 0;
     }
 
-    .grid {
+    .hero-description {
+        font-size: 1rem;
+        color: #94a3b8;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .hero-icons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .icon-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        color: #38bdf8;
+        backdrop-filter: blur(10px);
+    }
+
+    /* ================ FILTERS SECTION ================ */
+    .filters-container {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(10px);
+    }
+
+    .filters-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: #38bdf8;
+        font-size: 0.9rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        color: #f8fafc;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+        outline: none;
+        border-color: #38bdf8;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        color: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-filter-reset {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f8fafc;
+        flex: 1;
+        min-width: 150px;
+        cursor: pointer;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-filter-reset:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .filter-results-info {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        padding-top: 15px;
+    }
+
+    .active-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: #38bdf8;
+    }
+
+    /* ================ CARDS GRID ================ */
+    .grounds-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 24px;
+        gap: 28px;
         width: 100%;
+        margin-top: 20px;
     }
 
-    .card {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        border-radius: 12px;
+    .ground-card {
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 20px;
         padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: all 0.3s ease;
-        cursor: pointer;
+        position: relative;
+        backdrop-filter: blur(12px);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
-    .card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 8px 24px rgba(56, 189, 248, 0.2);
-        transform: translateY(-4px);
+    .ground-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(56, 189, 248, 0.8);
+        box-shadow: 0 20px 40px rgba(56, 189, 248, 0.25);
     }
 
-    .price {
-        font-size: 1.4rem;
+    .card-badge {
+        align-self: flex-start;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(14, 165, 233, 0.3) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.5);
+        color: #38bdf8;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.8rem;
         font-weight: 700;
-        color: var(--success);
-        margin: 12px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
     }
 
-    .card .btn {
+    .card-title {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+
+    .card-location {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    .card-price-container {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 22px;
+    }
+
+    .card-price {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #22c55e;
+        letter-spacing: -0.5px;
+    }
+
+    .price-unit {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .btn-book {
+        display: block;
         width: 100%;
         text-align: center;
-        margin-top: 16px;
+        background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 14px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-book:hover {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);
+        transform: scale(1.02);
     }
 
     .empty-state {
+        grid-column: 1 / -1;
         text-align: center;
         padding: 60px 20px;
-        color: var(--text-muted);
+        color: #94a3b8;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 20px;
+        border: 1px dashed rgba(56, 189, 248, 0.3);
     }
 
-    .empty-state h2 {
-        color: var(--text);
-        margin-bottom: 10px;
+    @media (max-width: 768px) {
+        .hero h1 { font-size: 2.5rem; }
+        .grounds-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="hero">
-    <h1>Book Premium Sports Turf Near You</h1>
-    <p>Real-time slot availability for Football, Cricket, Badminton & more</p>
+
+<!-- KICK VIDEO ANIMATION OVERLAY -->
+<div id="kick-overlay">
+    <video id="kick-video" autoplay muted playsinline preload="auto">
+        <source src="{{ url_for('static', filename='kick_animation.mp4') }}" type="video/mp4" />
+    </video>
 </div>
 
-<div class="grid">
-    {% if grounds %}
-        {% for ground in grounds %}
-            <div class="card">
-                <div>
-                    <span class="badge">{{ ground.sport_type }}</span>
-                    <h3 style="margin: 12px 0 6px 0;">{{ ground.name }}</h3>
-                    <p style="color: var(--text-muted); margin: 0;">📍 {{ ground.location }}</p>
-                    <div class="price">₹{{ ground.price_per_hour or 500 }} / hour</div>
-                </div>
-                <a href="{{ url_for('create_booking', ground_id=ground.id) }}" class="btn">Book Now</a>
+<!-- PAGE CONTENT CONTAINER -->
+<div class="page-wrapper" id="pageWrapper">
+    <!-- HERO HEADER -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>⚽ Book Premium Sports Turf Near You</h1>
+            <p class="hero-subtitle">Reserve Your Perfect Playing Ground</p>
+            <p class="hero-description">Real-time slot availability for Football, Cricket, Badminton, Tennis & more. Secure your booking instantly and start playing!</p>
+            <div class="hero-icons">
+                <div class="icon-badge"><span>⚡</span> Instant Booking</div>
+                <div class="icon-badge"><span>💰</span> Best Prices</div>
+                <div class="icon-badge"><span>📍</span> Near You</div>
             </div>
-        {% endfor %}
-    {% else %}
-        <div class="empty-state" style="grid-column: 1 / -1;">
-            <h2>No Grounds Available</h2>
-            <p>Please check back later for available sports grounds.</p>
         </div>
-    {% endif %}
+    </div>
+
+    <!-- FILTER SECTION -->
+    <div class="filters-container">
+        <div class="filters-title">
+            <span>🔍</span>
+            <span>Filter Venues</span>
+        </div>
+        
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label for="sportFilter">Sport Type</label>
+                <select id="sportFilter">
+                    <option value="">All Sports</option>
+                    <option value="Football">Football</option>
+                    <option value="Cricket">Cricket</option>
+                    <option value="Badminton">Badminton</option>
+                    <option value="Tennis">Tennis</option>
+                    <option value="Basketball">Basketball</option>
+                    <option value="Volleyball">Volleyball</option>
+                    <option value="Squash">Squash</option>
+                    <option value="Hockey">Hockey</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="locationFilter">Location</label>
+                <input type="text" id="locationFilter" placeholder="Search by location...">
+            </div>
+
+            <div class="filter-group">
+                <label for="priceMinFilter">Min Price (₹/hour)</label>
+                <input type="number" id="priceMinFilter" placeholder="0" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label for="priceMaxFilter">Max Price (₹/hour)</label>
+                <input type="number" id="priceMaxFilter" placeholder="10000" min="0">
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button class="btn-filter" onclick="applyFilters()">🔎 Apply Filters</button>
+            <button class="btn-filter-reset" onclick="resetFilters()">↻ Reset</button>
+        </div>
+
+        <div class="filter-results-info">
+            <span id="resultsCount">Showing all venues</span>
+        </div>
+
+        <div class="active-filters" id="activeFilters"></div>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="grounds-grid" id="groundsGrid">
+        {% if grounds %}
+            {% for ground in grounds %}
+                <div class="ground-card" data-sport="{{ ground.sport_type }}" data-location="{{ ground.location }}" data-price="{{ ground.price_per_hour or 500 }}">
+                    <div>
+                        <span class="card-badge">{{ ground.sport_type or 'Sports' }}</span>
+                        <h2 class="card-title">{{ ground.name }}</h2>
+                        <div class="card-location">
+                            <span>📍</span>
+                            <span>{{ ground.location }}</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card-price-container">
+                            <span class="card-price">₹{{ ground.price_per_hour or 500 }}</span>
+                            <span class="price-unit">/hour</span>
+                        </div>
+                        <a href="{{ url_for('create_booking', ground_id=ground.id) }}" class="btn-book">Book Now →</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🏟️</div>
+                <h3>No Grounds Found</h3>
+                <p>Check back later or try clearing your filters.</p>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+    // ================= FORCE AUTOPLAY & TRANSITION LOGIC =================
+    const kickVideo = document.getElementById('kick-video');
+    const kickOverlay = document.getElementById('kick-overlay');
+    const pageWrapper = document.getElementById('pageWrapper');
+
+    const kickTimestamp = 0.8; 
+    let hasRevealed = false;
+
+    function revealWebsite() {
+        if (hasRevealed) return;
+        hasRevealed = true;
+
+        kickOverlay.classList.add('fade-out');
+        pageWrapper.classList.add('visible');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        kickVideo.muted = true;
+        const playPromise = kickVideo.play();
+
+        if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+                console.warn("Autoplay blocked or video missing:", error);
+                revealWebsite();
+            });
+        }
+    });
+
+    kickVideo.addEventListener('timeupdate', () => {
+        if (kickVideo.currentTime >= kickTimestamp) {
+            revealWebsite();
+        }
+    });
+
+    kickVideo.addEventListener('ended', revealWebsite);
+    kickVideo.addEventListener('error', revealWebsite);
+
+    // ================= FILTER SCRIPT LOGIC =================
+    function applyFilters() {
+        const sport = document.getElementById('sportFilter').value.toLowerCase();
+        const location = document.getElementById('locationFilter').value.toLowerCase();
+        const priceMin = parseFloat(document.getElementById('priceMinFilter').value) || 0;
+        const priceMax = parseFloat(document.getElementById('priceMaxFilter').value) || 10000000;
+
+        const cards = document.querySelectorAll('.ground-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardSport = (card.getAttribute('data-sport') || '').toLowerCase();
+            const cardLocation = (card.getAttribute('data-location') || '').toLowerCase();
+            const cardPrice = parseFloat(card.getAttribute('data-price')) || 0;
+
+            const sportMatch = !sport || cardSport === sport;
+            const locationMatch = !location || cardLocation.includes(location);
+            const priceMatch = cardPrice >= priceMin && cardPrice <= priceMax;
+
+            if (sportMatch && locationMatch && priceMatch) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const resultsCount = document.getElementById('resultsCount');
+        if (visibleCount === 0) {
+            resultsCount.textContent = '❌ No venues match your search';
+        } else {
+            resultsCount.textContent = `✅ Showing ${visibleCount} venue${visibleCount !== 1 ? 's' : ''}`;
+        }
+
+        updateActiveFilters(sport, location, priceMin, priceMax);
+    }
+
+    function resetFilters() {
+        document.getElementById('sportFilter').value = '';
+        document.getElementById('locationFilter').value = '';
+        document.getElementById('priceMinFilter').value = '';
+        document.getElementById('priceMaxFilter').value = '';
+
+        const cards = document.querySelectorAll('.ground-card');
+        cards.forEach(card => card.style.display = 'flex');
+
+        document.getElementById('resultsCount').textContent = 'Showing all venues';
+        document.getElementById('activeFilters').innerHTML = '';
+    }
+
+    function updateActiveFilters(sport, location, priceMin, priceMax) {
+        const activeFiltersDiv = document.getElementById('activeFilters');
+        const filters = [];
+
+        if (sport) filters.push(`Sport: <strong>${sport}</strong>`);
+        if (location) filters.push(`Location: <strong>${location}</strong>`);
+        if (priceMin && priceMin > 0) filters.push(`Min Price: <strong>₹${priceMin}</strong>`);
+        if (priceMax && priceMax < 10000000) filters.push(`Max Price: <strong>₹${priceMax}</strong>`);
+
+        if (filters.length > 0) {
+            activeFiltersDiv.innerHTML = filters.map(f => `<div class="filter-tag">${f}</div>`).join('');
+        } else {
+            activeFiltersDiv.innerHTML = '';
+        }
+    }
+
+    document.getElementById('locationFilter').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+
+    document.getElementById('sportFilter').addEventListener('change', applyFilters);
+    document.getElementById('locationFilter').addEventListener('change', applyFilters);
+    document.getElementById('priceMinFilter').addEventListener('change', applyFilters);
+    document.getElementById('priceMaxFilter').addEventListener('change', applyFilters);
+</script>
 {% endblock %}

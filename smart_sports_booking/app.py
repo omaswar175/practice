@@ -98,6 +98,44 @@ def ground_list():
     grounds = Ground.query.filter_by(status='Available').all()
     return render_template('grounds.html', grounds=grounds)
 
+@app.route('/api/grounds/filter', methods=['GET'])
+def filter_grounds():
+    """API endpoint to filter grounds based on criteria"""
+    sport_type = request.args.get('sport', '').strip()
+    location = request.args.get('location', '').strip()
+    price_min = request.args.get('price_min', type=int, default=0)
+    price_max = request.args.get('price_max', type=int, default=999999)
+
+    query = Ground.query.filter_by(status='Available')
+
+    if sport_type:
+        query = query.filter(Ground.sport_type.ilike(f'%{sport_type}%'))
+
+    if location:
+        query = query.filter(Ground.location.ilike(f'%{location}%'))
+
+    query = query.filter(
+        Ground.price_per_hour >= price_min,
+        Ground.price_per_hour <= price_max
+    )
+
+    grounds = query.all()
+
+    return jsonify({
+        'count': len(grounds),
+        'grounds': [
+            {
+                'id': g.id,
+                'name': g.name,
+                'sport_type': g.sport_type,
+                'location': g.location,
+                'price_per_hour': g.price_per_hour,
+                'rating': g.rating
+            }
+            for g in grounds
+        ]
+    })
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
