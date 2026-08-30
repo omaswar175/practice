@@ -4,32 +4,36 @@
 
 {% block extra_css %}
 <style>
-    /* ================ KICK ANIMATION OVERLAY ================ */
-    #kick-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: #0d1117;
-        z-index: 99999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: opacity 0.8s ease, visibility 0.8s;
-    }
+ /* ================ KICK ANIMATION OVERLAY (RESPONSIVE FIX) ================ */
+#kick-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0d1117; /* Dark background matches video canvas */
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease, visibility 0.8s;
+    overflow: hidden;
+}
 
-    #kick-video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+#kick-video {
+    width: 100%;
+    height: 100%;
+    /* 'contain' ensures the video scales down proportionally without cropping legs or ball */
+    object-fit: contain; 
+    max-width: 100%;
+    max-height: 100%;
+}
 
-    #kick-overlay.fade-out {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
+#kick-overlay.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
 
     /* Page Content Initially Hidden */
     .page-wrapper {
