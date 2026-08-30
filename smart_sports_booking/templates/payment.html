@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Payment | TurfZone{% endblock %}
+
+{% block extra_css %}
+<style>
+    main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 200px);
+    }
+
+    .payment-container {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .payment-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        padding: 40px;
+        border-radius: 16px;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .payment-header h2 {
+        margin: 0 0 8px 0;
+        color: var(--text);
+        font-size: 1.8rem;
+    }
+
+    .payment-header p {
+        margin: 0;
+        color: var(--text-muted);
+    }
+
+    .booking-summary {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+    }
+
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+
+    .summary-row label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .summary-row span {
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    .summary-row.total {
+        font-size: 1.2rem;
+        margin-top: 10px;
+        padding-top: 15px;
+        border-top: 2px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .summary-row.total span {
+        color: var(--success);
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+
+    .payment-methods {
+        margin: 30px 0;
+    }
+
+    .payment-methods h3 {
+        color: var(--accent);
+        margin: 0 0 15px 0;
+        font-size: 1rem;
+    }
+
+    .razorpay-button {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--accent) 0%, #0ea5e9 100%);
+        color: var(--bg);
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .razorpay-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.4);
+    }
+
+    .razorpay-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .razorpay-button i {
+        font-size: 1.2rem;
+    }
+
+    .security-info {
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: var(--accent);
+    }
+
+    .loading {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 20px;
+    }
+
+    .loading-spinner {
+        border: 3px solid rgba(56, 189, 248, 0.2);
+        border-top: 3px solid var(--accent);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .info-box {
+        background: rgba(251, 191, 36, 0.1);
+        border-left: 4px solid #fbbf24;
+        padding: 12px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-card">
+        <!-- Header -->
+        <div class="payment-header">
+            <h2>💳 Secure Payment</h2>
+            <p>Complete your booking payment</p>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <strong>ℹ️ Demo Mode:</strong> This is a demo payment page. In production, integrate with your Razorpay account.
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="booking-summary">
+            <h3 style="margin: 0 0 15px 0; color: var(--text); font-size: 1rem;">Booking Details</h3>
+            
+            <div class="summary-row">
+                <label>🏟️ Ground</label>
+                <span>{{ ground.name }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <label>📅 Date</label>
+                <span>{{ booking.booking_date }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <label>⏰ Time Slot</label>
+                <span>{{ booking.time_slot }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <label>⛳ Sport Type</label>
+                <span>{{ ground.sport_type }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <label>📍 Location</label>
+                <span>{{ ground.location }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <label>Duration</label>
+                <span>1 Hour</span>
+            </div>
+            
+            <div class="summary-row total">
+                <label>Total Amount</label>
+                <span>₹{{ (amount / 100)|int }}</span>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+            <h3>Select Payment Method</h3>
+            
+            <button class="razorpay-button" id="razorpay-button" onclick="openRazorpay()">
+                💰 Pay with Razorpay
+            </button>
+        </div>
+
+        <!-- Security Info -->
+        <div class="security-info">
+            🔒 Secured by Razorpay | 256-bit SSL Encrypted
+        </div>
+
+        <!-- Back Link -->
+        <a href="{{ url_for('my_bookings') }}" class="back-link">← Cancel & Go Back</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function openRazorpay() {
+        const button = document.getElementById('razorpay-button');
+        button.disabled = true;
+        button.innerHTML = '<div class="loading-spinner"></div> Opening Razorpay...';
+
+        const options = {
+            "key": "{{ key_id }}",
+            "amount": {{ amount }},
+            "currency": "INR",
+            "name": "TurfZone Sports Booking",
+            "description": "Booking for {{ ground.name }}",
+            "order_id": "{{ order_id }}",
+            "handler": function(response) {
+                verifyPayment(response);
+            },
+            "prefill": {
+                "name": "{{ current_user.username }}",
+                "email": "{{ user_email }}",
+                "contact": "{{ user_phone }}"
+            },
+            "theme": {
+                "color": "#38bdf8"
+            },
+            "modal": {
+                "ondismiss": function() {
+                    button.disabled = false;
+                    button.innerHTML = '💰 Pay with Razorpay';
+                    console.log("Payment cancelled");
+                }
+            }
+        };
+
+        // In production, verify with actual Razorpay
+        // const rzp1 = new Razorpay(options);
+        // rzp1.open();
+
+        // For DEMO: Auto-proceed to success
+        console.log("Demo Mode: Proceeding to payment verification...");
+        setTimeout(() => {
+            verifyPayment({
+                razorpay_order_id: "{{ order_id }}",
+                razorpay_payment_id: "pay_demo_" + Date.now(),
+                razorpay_signature: "demo_signature"
+            });
+        }, 2000);
+    }
+
+    function verifyPayment(response) {
+        const button = document.getElementById('razorpay-button');
+        button.innerHTML = '<div class="loading-spinner"></div> Verifying Payment...';
+
+        fetch("{{ url_for('verify_payment') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redirect to success page
+                window.location.href = "{{ url_for('payment_success', booking_id=booking.id) }}";
+            } else {
+                // Redirect to failure page
+                window.location.href = "{{ url_for('payment_failed', booking_id=booking.id) }}";
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Payment verification failed. Please try again.');
+            button.disabled = false;
+            button.innerHTML = '💰 Pay with Razorpay';
+        });
+    }
+</script>
+{% endblock %}

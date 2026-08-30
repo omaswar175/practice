@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful | TurfZone{% endblock %}
+
+{% block extra_css %}
+<style>
+    main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 200px);
+    }
+
+    .success-container {
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .success-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        padding: 40px;
+        border-radius: 16px;
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        box-shadow: 0 8px 32px rgba(74, 222, 128, 0.1);
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        color: var(--success);
+        margin-bottom: 20px;
+        animation: bounce 0.6s ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .success-card h2 {
+        color: var(--success);
+        font-size: 2rem;
+        margin: 0 0 10px 0;
+    }
+
+    .success-card p {
+        color: var(--text-muted);
+        margin: 0 0 30px 0;
+        font-size: 1.05rem;
+    }
+
+    .booking-details {
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-row strong {
+        color: var(--text);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .btn-primary, .btn-secondary {
+        flex: 1;
+        padding: 14px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        background: var(--success);
+        color: var(--bg);
+    }
+
+    .btn-primary:hover {
+        background: #22c55e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border);
+    }
+
+    .receipt-section {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .receipt-section a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .receipt-section a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">✅</div>
+        
+        <h2>Payment Successful!</h2>
+        <p>Your booking has been confirmed</p>
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+            <h3 style="margin: 0 0 16px 0; color: var(--text); text-align: center; font-size: 1.1rem;">Your Booking</h3>
+            
+            <div class="detail-row">
+                <span>🏟️ Ground</span>
+                <strong>{{ booking.ground.name }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>📅 Date</span>
+                <strong>{{ booking.booking_date }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>⏰ Time Slot</span>
+                <strong>{{ booking.time_slot }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>📍 Location</span>
+                <strong>{{ booking.ground.location }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>💰 Amount Paid</span>
+                <strong>₹{{ (booking.total_amount / 100)|int }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>🆔 Booking ID</span>
+                <strong>#{{ booking.id }}</strong>
+            </div>
+            
+            <div class="detail-row">
+                <span>🔒 Payment Status</span>
+                <strong style="color: var(--success);">✓ Completed</strong>
+            </div>
+        </div>
+
+        <!-- Receipt Section -->
+        <div class="receipt-section">
+            📧 A confirmation email has been sent to your registered email address
+            <br><a href="#">📄 Download Receipt</a>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{{ url_for('my_bookings') }}" class="btn-primary">📅 View My Bookings</a>
+            <a href="{{ url_for('ground_list') }}" class="btn-secondary">🏟️ Browse More</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
